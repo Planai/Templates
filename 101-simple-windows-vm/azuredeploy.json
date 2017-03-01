@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "newStorageAccountName": { 
+    "newStorageAccountName": {
       "type": "string",
       "metadata": {
         "description": "Unique DNS Name for the Storage Account where the Virtual Machine's disks will be placed."
@@ -31,10 +31,10 @@
       "defaultValue": "West US",
       "allowedValues": [
         "West US",
-        "Est US 2"
+        "East US 2"
       ],
       "metadata": {
-        "description": "Restricts choices to where premium storage is located in the us"
+        "description": "Restrict choices"
       }
     },
     "windowsOSVersion": {
@@ -49,10 +49,10 @@
         "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version. Allowed values: 2008-R2-SP1, 2012-Datacenter, 2012-R2-Datacenter."
       }
     },
-    "sizeOfEachDataDiskInGB": {
+    "sizeOfDiskInGB": {
       "type": "string",
       "metadata": {
-        "description": "Size of each data disk in GB"
+        "description": "Size of the empty data disk in GB"
       }
     }
   },
@@ -80,7 +80,7 @@
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[parameters('newStorageAccountName')]",
       "apiVersion": "2015-05-01-preview",
-      "location": "[parameters(`location`)]",
+      "location": "[parameters('location')]",
       "properties": {
         "accountType": "[variables('storageAccountType')]"
       }
@@ -89,7 +89,7 @@
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('publicIPAddressName')]",
-      "location": "[parameters(`location`)]",
+      "location": "[parameters('location')]",
       "properties": {
         "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
         "dnsSettings": {
@@ -101,7 +101,7 @@
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
-      "location": "[parameters(`location`)]",
+      "location": "[parameters('location')]",
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
@@ -122,7 +122,7 @@
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('nicName')]",
-      "location": "[parameters(`location`)]",
+      "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
@@ -148,7 +148,7 @@
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[variables('vmName')]",
-      "location": "[parameters(`location`)]",
+      "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]",
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
@@ -158,7 +158,7 @@
           "vmSize": "[variables('vmSize')]"
         },
         "osProfile": {
-          "computerName": "[variables('vmName')]",
+          "computername": "[variables('vmName')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -176,19 +176,19 @@
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          }
-        },
-        "datadisks": [
+          },
+          "dataDisks": [
             {
               "name": "datadisk1",
-              "diskSizeGB": "[parameters(`sizeOfDiskInGB`)]",
+              "diskSizeGB": "[parameters('sizeOfDiskInGB')]",
               "lun": 0,
               "vhd": {
-                "Uri": "[variables(`dataDisk1VhdName`)]"
+                "Uri": "[variables('dataDisk1VhdName')]"
               },
               "createOption": "Empty"
             }
-        ],
+          ]
+        },
         "networkProfile": {
           "networkInterfaces": [
             {

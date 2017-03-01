@@ -9,16 +9,16 @@
       "value": "admin123"
     },
     "adminPassword": {
-      "value": "Pa$$w0rd1234"
+      "value": "Passw0rd!"
     },
     "dnsNameForPublicIP": {
-      "value": "pjh1234"
+      "value": "dmg6685"
     },
     "location": {
       "value": "West US"
     },
-    "sizeOfEachDataDiskInGB": {
-      "value": "19"
+    "sizeOfDiskInGB": {
+      "value": "20"
     }
   }
 }
